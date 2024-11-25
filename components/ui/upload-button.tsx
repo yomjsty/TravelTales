@@ -2,11 +2,8 @@
 
 import { useDropzone } from "react-dropzone";
 import { useUploadThing } from "@/utils/uploadthing";
-import { generateReactHelpers } from "@uploadthing/react";
 import { useState, useCallback } from "react";
 import { Upload, Loader2 } from "lucide-react";
-import Image from "next/image";
-import { Button } from "./button";
 
 interface UploadButtonProps {
     onUploadComplete: (url: string) => void;

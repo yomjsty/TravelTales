@@ -1,93 +1,64 @@
-import { auth } from "@/lib/auth"
-import prisma from "@/lib/db"
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/db";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
+type RouteContext = {
+    params: Promise<{
+        commentId: string;
+    }>;
+};
 
 export async function POST(
     req: NextRequest,
-    { params }: { params: { commentId: string } }
+    context: RouteContext
 ) {
-    const { commentId } = await params
     try {
         const session = await auth.api.getSession({
-            headers: req.headers
-        })
+            headers: await headers()
+        });
 
-        if (!session) {
-            return NextResponse.json(
-                { error: "Unauthorized" },
-                { status: 401 }
-            )
+        if (!session || !session.user) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
+
+        const userId = session.user.id;
+        const { commentId } = await context.params;
 
         const existingLike = await prisma.commentLike.findUnique({
             where: {
                 commentId_userId: {
+                    userId,
                     commentId,
-                    userId: session.user.id,
-                },
-            },
-        })
+                }
+            }
+        });
 
         if (existingLike) {
             await prisma.commentLike.delete({
                 where: {
                     commentId_userId: {
+                        userId,
                         commentId,
-                        userId: session.user.id,
-                    },
-                },
-            })
-            return new NextResponse(null, { status: 204 })
+                    }
+                }
+            });
+            return NextResponse.json({ message: "Like removed" });
         }
 
-        const like = await prisma.commentLike.create({
+        await prisma.commentLike.create({
             data: {
+                userId,
                 commentId,
-                userId: session.user.id,
-            },
-        })
+            }
+        });
 
-        return NextResponse.json(like)
+        return NextResponse.json({ message: "Comment liked" });
     } catch (error) {
-        console.error("Error handling like:", error)
+        console.error("Error handling comment like:", error);
         return NextResponse.json(
-            { error: "Internal Server Error" },
+            { error: "Failed to process like" },
             { status: 500 }
-        )
-    }
-}
-
-export async function DELETE(
-    req: NextRequest,
-    { params }: { params: { commentId: string } }
-) {
-    const { commentId } = await params
-    try {
-        const session = await auth.api.getSession({
-            headers: req.headers
-        })
-
-        if (!session) {
-            return NextResponse.json(
-                { error: "Unauthorized" },
-                { status: 401 }
-            )
-        }
-
-        await prisma.commentLike.delete({
-            where: {
-                commentId_userId: {
-                    commentId,
-                    userId: session.user.id,
-                },
-            },
-        })
-
-        return new NextResponse(null, { status: 204 })
-    } catch (error) {
-        return NextResponse.json(
-            { error: "Internal Server Error" },
-            { status: 500 }
-        )
+        );
     }
 } 

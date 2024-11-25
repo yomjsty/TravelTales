@@ -72,7 +72,6 @@ function CreatePostPage() {
             let imageUrl = "";
             if (data.featuredImage) {
                 try {
-                    console.log("Starting image upload...");
                     const uploadResult = await startUpload([data.featuredImage as File]);
                     if (!uploadResult || !uploadResult[0]) {
                         throw new Error("Image upload failed - no result returned");
@@ -259,10 +258,15 @@ function CreatePostPage() {
                                     onDragEnter={handleDragEvents}
                                     onDragLeave={handleDragEvents}
                                     onDragOver={handleDragEvents}
-                                    onDrop={(e) => {
+                                    onDrop={(e: React.DragEvent<HTMLDivElement>) => {
                                         handleDragEvents(e)
                                         const file = e.dataTransfer.files?.[0]
-                                        if (file) handleFileChange({ target: { files: [file] } } as any)
+                                        if (file) {
+                                            const fakeEvent = {
+                                                target: { files: [file] }
+                                            } as unknown as React.ChangeEvent<HTMLInputElement>
+                                            handleFileChange(fakeEvent)
+                                        }
                                     }}
                                 >
                                     <Input

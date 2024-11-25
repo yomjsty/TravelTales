@@ -42,8 +42,14 @@ async function getRecommendedPosts(currentPostId: string, category: string) {
     return posts
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-    const post = await getPost((await params).slug)
+type RouteContext = {
+    params: Promise<{
+        slug: string;
+    }>;
+};
+
+export async function generateMetadata(context: RouteContext): Promise<Metadata> {
+    const post = await getPost((await context.params).slug)
 
     if (!post) {
         return {
@@ -63,12 +69,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
 }
 
-async function BlogPostPage({ params }: { params: { slug: string } }) {
+async function BlogPostPage(context: RouteContext) {
     const session = await auth.api.getSession({
         headers: await headers()
     })
 
-    const post = await getPost((await params).slug)
+    const post = await getPost((await context.params).slug)
 
     if (!post) {
         notFound()

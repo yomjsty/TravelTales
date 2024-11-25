@@ -12,7 +12,7 @@ export default function DashboardPage() {
                     className="bg-[#0B4A53] hover:bg-[#0B4A53]/80"
 
                 >
-                    <Link href="#blog-section">Write a Blog</Link>
+                    <Link href="/dashboard/create-post">Write a Blog</Link>
                 </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

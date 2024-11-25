@@ -27,7 +27,7 @@ export default function SharePost({ title }: { title: string }) {
                 description: "Link copied to clipboard!",
                 duration: 2000
             })
-        } catch (err) {
+        } catch {
             toast({
                 variant: "destructive",
                 description: "Failed to copy link",

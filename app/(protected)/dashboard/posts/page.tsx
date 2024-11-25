@@ -46,7 +46,7 @@ export default async function PostsPage() {
 
             {posts.length === 0 ? (
                 <div className="text-center py-10">
-                    <p className="text-gray-500">You haven't written any posts yet.</p>
+                    <p className="text-gray-500">You haven&apos;t written any posts yet.</p>
                 </div>
             ) : (
                 <div className="space-y-6">

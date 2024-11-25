@@ -2,12 +2,16 @@ import { auth } from "@/lib/auth"
 import prisma from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
 
+type RouteContext = {
+    params: Promise<{
+        commentId: string;
+    }>;
+};
+
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { commentId: string } }
+    context: RouteContext
 ) {
-    const { commentId } = params
-
     try {
         const session = await auth.api.getSession({
             headers: req.headers
@@ -19,6 +23,8 @@ export async function DELETE(
                 { status: 401 }
             )
         }
+
+        const { commentId } = await context.params;
 
         // Get the comment to verify ownership
         const comment = await prisma.comment.findUnique({

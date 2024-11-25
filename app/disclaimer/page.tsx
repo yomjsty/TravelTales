@@ -30,7 +30,7 @@ function DisclaimerPage() {
             <section className="mb-6">
                 <h2 className="text-2xl font-semibold mb-2">Tidak Ada Jaminan</h2>
                 <p className="text-gray-700">
-                    Website ini disediakan "sebagaimana adanya" tanpa jaminan apa pun, baik tersurat maupun tersirat. Pengguna bertanggung jawab
+                    Website ini disediakan &quot;sebagaimana adanya&quot; tanpa jaminan apa pun, baik tersurat maupun tersirat. Pengguna bertanggung jawab
                     penuh atas penggunaan platform ini.
                 </p>
             </section>

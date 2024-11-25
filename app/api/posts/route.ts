@@ -24,15 +24,6 @@ export async function POST(req: NextRequest) {
         const featuredImage = formData.get("featuredImage") as string;
         const category = formData.get("category") as string;
 
-        console.log("Form data received:", {
-            title,
-            slug,
-            location,
-            content,
-            featuredImage,
-            category
-        });
-
         const validation = postSchema.safeParse({
             title,
             slug,

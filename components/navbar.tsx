@@ -58,7 +58,7 @@ export default function Navbar() {
                         </Button>
                     </div>
                 ) : <SignInDialog />}
-                <MobileNavbar />
+                <MobileNavbar isLoggedIn={!!session} />
             </div>
         </div>
     </nav>;

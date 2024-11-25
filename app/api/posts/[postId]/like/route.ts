@@ -2,11 +2,16 @@ import { auth } from "@/lib/auth"
 import prisma from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
 
+type RouteContext = {
+    params: Promise<{
+        postId: string;
+    }>;
+};
+
 export async function POST(
     req: NextRequest,
-    { params }: { params: { postId: string } }
+    context: RouteContext
 ) {
-    const { postId } = await params
     try {
         const session = await auth.api.getSession({
             headers: req.headers
@@ -18,6 +23,8 @@ export async function POST(
                 { status: 401 }
             )
         }
+
+        const { postId } = await context.params
 
         const like = await prisma.like.create({
             data: {
@@ -27,7 +34,7 @@ export async function POST(
         })
 
         return NextResponse.json(like)
-    } catch (error) {
+    } catch {
         return NextResponse.json(
             { error: "Internal Server Error" },
             { status: 500 }
@@ -37,9 +44,8 @@ export async function POST(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { postId: string } }
+    context: RouteContext
 ) {
-    const { postId } = await params
     try {
         const session = await auth.api.getSession({
             headers: req.headers
@@ -51,6 +57,8 @@ export async function DELETE(
                 { status: 401 }
             )
         }
+
+        const { postId } = await context.params
 
         const existingLike = await prisma.like.findUnique({
             where: {

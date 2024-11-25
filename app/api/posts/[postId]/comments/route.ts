@@ -2,11 +2,16 @@ import { auth } from "@/lib/auth"
 import prisma from "@/lib/db"
 import { NextRequest, NextResponse } from "next/server"
 
+type RouteContext = {
+    params: Promise<{
+        postId: string;
+    }>;
+};
+
 export async function GET(
     req: NextRequest,
-    { params }: { params: { postId: string } }
+    context: RouteContext
 ) {
-    const { postId } = await params
     const { searchParams } = new URL(req.url)
     const commentId = searchParams.get('commentId')
     const skip = parseInt(searchParams.get('skip') || '0')
@@ -57,6 +62,8 @@ export async function GET(
                 hasMore
             })
         }
+
+        const { postId } = await context.params;
 
         // Original code for fetching top-level comments
         const comments = await prisma.comment.findMany({
@@ -115,7 +122,7 @@ export async function GET(
         })
 
         return NextResponse.json(comments)
-    } catch (error) {
+    } catch {
         return NextResponse.json(
             { error: "Internal Server Error" },
             { status: 500 }
@@ -125,9 +132,8 @@ export async function GET(
 
 export async function POST(
     req: NextRequest,
-    { params }: { params: { postId: string } }
+    context: RouteContext
 ) {
-    const { postId } = await params
     try {
         const session = await auth.api.getSession({
             headers: req.headers
@@ -141,6 +147,8 @@ export async function POST(
         }
 
         const { content, parentId } = await req.json()
+
+        const { postId } = await context.params
 
         const comment = await prisma.comment.create({
             data: {
@@ -161,7 +169,7 @@ export async function POST(
         })
 
         return NextResponse.json(comment)
-    } catch (error) {
+    } catch {
         return NextResponse.json(
             { error: "Internal Server Error" },
             { status: 500 }

@@ -10,11 +10,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowDownUp, MessageSquare, MoreHorizontal, ThumbsUp } from 'lucide-react'
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useSession } from "@/lib/auth-client"
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
-import Link from "next/link"
 import SignInDialog from "../signindialog-2"
 
 interface Comment {
@@ -51,34 +50,32 @@ export default function CommentsSection({ postId, onCommentCountChange }: Commen
     const [replyingTo, setReplyingTo] = useState<string | null>(null)
     const [replyContent, setReplyContent] = useState("")
     const [isLoading, setIsLoading] = useState(false)
-    const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set())
     const [visibleReplies, setVisibleReplies] = useState<Record<string, number>>({})
     const [loadingReplies, setLoadingReplies] = useState<Record<string, boolean>>({})
     const [hasMoreReplies, setHasMoreReplies] = useState<Record<string, boolean>>({})
 
-
-    const fetchComments = async () => {
+    const fetchComments = useCallback(async () => {
         try {
-            const response = await fetch(`/api/posts/${postId}/comments`)
-            if (!response.ok) throw new Error('Failed to fetch comments')
-            const data = await response.json()
-            setComments(data)
-            onCommentCountChange(data.length)
-        } catch (error) {
+            const response = await fetch(`/api/comments?postId=${postId}`);
+            if (!response.ok) throw new Error('Failed to fetch comments');
+            const data = await response.json();
+            setComments(data);
+            onCommentCountChange(data.length);
+        } catch {
             toast({
                 description: "Failed to load comments",
                 variant: "destructive"
-            })
+            });
         }
-    }
+    }, [postId, onCommentCountChange, toast]);
 
     useEffect(() => {
         fetchComments()
-    }, [postId, onCommentCountChange])
+    }, [postId, onCommentCountChange, fetchComments])
 
     useEffect(() => {
         fetchComments()
-    }, [sortBy])
+    }, [sortBy, fetchComments])
 
     const handleAddComment = async () => {
         if (!session) {
@@ -116,7 +113,7 @@ export default function CommentsSection({ postId, onCommentCountChange }: Commen
             toast({
                 description: "Comment added successfully",
             })
-        } catch (error) {
+        } catch {
             toast({
                 description: "Failed to add comment",
                 variant: "destructive"
@@ -245,20 +242,12 @@ export default function CommentsSection({ postId, onCommentCountChange }: Commen
             toast({
                 description: "Reply added successfully",
             })
-        } catch (error) {
+        } catch {
             toast({
                 description: "Failed to add reply",
                 variant: "destructive"
             })
         }
-    }
-
-    const handleExpandReplies = (commentId: string) => {
-        setExpandedComments(prev => {
-            const newSet = new Set(prev)
-            newSet.add(commentId)
-            return newSet
-        })
     }
 
     const handleLoadMoreReplies = async (commentId: string) => {
@@ -305,7 +294,7 @@ export default function CommentsSection({ postId, onCommentCountChange }: Commen
                 ...prev,
                 [commentId]: data.hasMore
             }))
-        } catch (error) {
+        } catch {
             toast({
                 description: "Failed to load replies",
                 variant: "destructive"
@@ -348,7 +337,7 @@ export default function CommentsSection({ postId, onCommentCountChange }: Commen
             toast({
                 description: "Comment deleted successfully",
             })
-        } catch (error) {
+        } catch {
             toast({
                 description: "Failed to delete comment",
                 variant: "destructive"
@@ -555,7 +544,7 @@ export default function CommentsSection({ postId, onCommentCountChange }: Commen
                                     </div>
                                 ))}
 
-                                {(comment._count?.replies || 0) > (visibleReplies[comment.id] || 1) && (
+                                {hasMoreReplies[comment.id] && (
                                     <Button
                                         variant="ghost"
                                         size="sm"

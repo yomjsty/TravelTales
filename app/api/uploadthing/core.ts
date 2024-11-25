@@ -1,3 +1,4 @@
+import { auth } from "@/lib/auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 const f = createUploadthing();
@@ -9,12 +10,20 @@ export const ourFileRouter = {
             maxFileCount: 1
         }
     })
-        .middleware(async () => {
-            console.log("Upload middleware executing");
-            return { userId: "test" };
+        .middleware(async ({ req }) => {
+            const session = await auth.api.getSession({
+                headers: req.headers
+            });
+
+            if (!session) {
+                throw new Error("Unauthorized");
+            }
+
+            const user = session.user;
+
+            return { userId: user.id };
         })
-        .onUploadComplete(async ({ metadata, file }) => {
-            console.log("Upload completed", { metadata, file });
+        .onUploadComplete(async ({ file }) => {
             return { url: file.url };
         }),
 } satisfies FileRouter;

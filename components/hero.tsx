@@ -11,8 +11,13 @@ import hero1 from "@/public/hero1.webp"
 import hero2 from "@/public/hero2.webp"
 import { Button } from "./ui/button"
 import Link from "next/link"
+import { authClient } from "@/lib/auth-client"
+import { useToast } from "@/hooks/use-toast"
 
 function HeroSection() {
+    const { data: session } = authClient.useSession()
+    const { toast } = useToast()
+
     return (
         <section className="relative">
             <Carousel
@@ -51,11 +56,24 @@ function HeroSection() {
                     >
                         <Link href="#blog-section">Read Blog</Link>
                     </Button>
-                    <Button
-                        variant="secondary"
-                    >
-                        <Link href="/create-post">Write Blog</Link>
-                    </Button>
+                    {session ? (
+                        <Button
+                            variant="secondary"
+                        >
+                            <Link href="/dashboard/create-post">Write Blog</Link>
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="secondary"
+                            onClick={() =>
+                                toast({
+                                    description: "Please sign in first to continue",
+                                })
+                            }
+                        >
+                            Write Blog
+                        </Button>
+                    )}
                 </div>
             </div>
             <div className="absolute inset-x-0 bottom-0 h-[20%] bg-gradient-to-t from-white to-transparent" />

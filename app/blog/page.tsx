@@ -2,9 +2,9 @@ import prisma from "@/lib/db";
 import BlogList from "@/components/blog-list";
 import SearchInput from "@/components/search-input";
 
-interface SearchParams {
+type SearchParams = Promise<{
     search?: string;
-}
+}>
 
 export default async function BlogPage({ searchParams }: { searchParams: SearchParams }) {
     const search = (await searchParams).search;

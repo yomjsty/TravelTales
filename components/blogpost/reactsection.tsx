@@ -40,7 +40,7 @@ export default function ReactSection({ postId, initialLikes, commentCount, isLik
 
             setLiked(!liked)
             setLikes(liked ? likes - 1 : likes + 1)
-        } catch (error) {
+        } catch {
             toast({
                 variant: "destructive",
                 description: "Something went wrong. Please try again.",
@@ -68,7 +68,7 @@ export default function ReactSection({ postId, initialLikes, commentCount, isLik
             toast({
                 description: bookmarked ? "Post removed from bookmarks" : "Post added to bookmarks",
             })
-        } catch (error) {
+        } catch {
             toast({
                 variant: "destructive",
                 description: "Something went wrong. Please try again.",

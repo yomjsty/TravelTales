@@ -6,7 +6,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { buttonVariants } from "@/components/ui/button"
 import SignInForm from "./signinform"
 
 function SignInDialog() {

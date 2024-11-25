@@ -1,7 +1,7 @@
 import { betterFetch } from "@better-fetch/fetch";
 import type { Session } from "better-auth/types";
 import { NextResponse, type NextRequest } from "next/server";
-import { apiAuthPrefix, DEFAULT_LOGIN_REDIRECT, publicRoutes } from "./routes";
+import { apiAuthPrefix, publicRoutes } from "./routes";
 
 export default async function authMiddleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
@@ -14,6 +14,8 @@ export default async function authMiddleware(request: NextRequest) {
 
     const isPublicApiRoute =
         pathname.startsWith('/api/posts') && request.method === 'GET' ||
+        pathname.startsWith('/api/comments') && request.method === 'GET' ||
+        pathname.startsWith('/api/uploadthing') ||
         pathname.startsWith('/blog');
 
     if (isApiAuthRoute || isPublicApiRoute) {

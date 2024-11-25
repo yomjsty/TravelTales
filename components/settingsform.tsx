@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Check, Loader2 } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { UploadButton } from "./ui/upload-button"
 import { useToast } from "@/hooks/use-toast"
@@ -30,7 +30,7 @@ export default function SettingsForm({ user, bio }: ProfileProps) {
         setUploaded(true);
     };
 
-    const hasChanges = name !== user.name || userBio !== bio || avatar !== user.image;
+    const hasChanges = name !== user.name || userBio !== bio || avatar !== user.image || uploaded;
 
     const handleSaveChanges = async () => {
         const payload = {
@@ -54,6 +54,7 @@ export default function SettingsForm({ user, bio }: ProfileProps) {
                     title: "Profile updated successfully",
                 })
                 setLoading(false)
+                setUploaded(false)
             } else {
                 toast({
                     title: "Failed to update profile.",

@@ -11,7 +11,7 @@ import { Menu } from "lucide-react"
 import Link from "next/link"
 import { Separator } from "./ui/separator"
 
-export default function MobileNavbar() {
+export default function MobileNavbar({ isLoggedIn }: { isLoggedIn: boolean }) {
     return (
         <Sheet>
             <SheetTrigger asChild>
@@ -31,9 +31,15 @@ export default function MobileNavbar() {
                         </Link>
                     </SheetTitle>
                     <SheetDescription></SheetDescription>
-                    <div className="grid gap-4">
+                    <div className="grid gap-4 text-sm text-start">
+                        {isLoggedIn && (
+                            <>
+                                <Separator />
+                                <Link href="/dashboard" className="hover:underline underline-offset-4">Dashboard</Link>
+                            </>
+                        )}
                         <Separator />
-                        <div className="grid gap-4 text-sm text-start">
+                        <div className="grid gap-4">
                             <Link href="/about" className="hover:underline underline-offset-4">About</Link>
                             <Link href="/blog" className="hover:underline underline-offset-4">Blog</Link>
                             <Link href="/disclaimer" className="hover:underline underline-offset-4">Disclaimer</Link>
