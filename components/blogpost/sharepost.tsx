@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation"
 export default function SharePost({ title }: { title: string }) {
     const pathname = usePathname()
     const { toast } = useToast()
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+    const baseUrl = "https://traveltales-blog.vercel.app"
     const link = `${baseUrl}${pathname}`
 
     const handleShare = (platform: 'facebook' | 'twitter' | 'reddit') => {

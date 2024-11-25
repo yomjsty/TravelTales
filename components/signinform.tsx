@@ -5,7 +5,7 @@ import { signIn } from "@/lib/auth-client";
 export default function SignInForm() {
 
     return (
-        <div className="w-full gap-4 flex items-center justify-evenly">
+        <div className="w-full gap-4 flex flex-wrap items-center justify-evenly">
             <Button
                 variant="outline"
                 onClick={async () => {
