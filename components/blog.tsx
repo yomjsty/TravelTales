@@ -33,6 +33,10 @@ async function getPosts() {
 export default async function BlogSection() {
     const posts = await getPosts()
 
+    if (posts.length === 0) {
+        return <p className="text-center text-lg font-semibold pb-12">No posts yet.</p>
+    }
+
     return (
         <section id="blog-section" className={cn(nunito.className, "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-w-screen-xl mx-auto pb-14 px-6 lg:px-0")}>
             {posts.map((post) => (
